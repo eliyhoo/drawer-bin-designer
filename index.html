@@ -229,6 +229,47 @@ details.card.more:not([open]){padding-top:11px;padding-bottom:11px}
 button.big{padding:11px 14px;font-size:15px}
 .also{margin-top:10px;font-size:12.5px;color:var(--muted)}
 .also .link{font-size:12.5px}
+/* ===== themes (prototype: ?theme=workshop | night | minimal) ===== */
+html[data-theme=workshop]{--bg:#F4EEE3;--panel:#FFFCF6;--ink:#2B2723;--muted:#7A6F63;--line:#E4D9C8;--accent:#E0612A;--danger:#C2361F;--drawer:#D8B98E;--field:#FFFFFF;--ok:#3F7D4E;--bedc:#3A332C;color-scheme:light}
+html[data-theme=workshop] body{background:var(--bg);color:var(--ink)}
+html[data-theme=workshop] h1,html[data-theme=workshop] h2,html[data-theme=workshop] .tabs button,html[data-theme=workshop] summary{font-family:Rockwell,"Roboto Slab","Zilla Slab","Bookman Old Style",Georgia,serif;letter-spacing:0}
+html[data-theme=workshop] .card,html[data-theme=workshop] .tabs{border:1.5px solid var(--line);border-radius:6px;box-shadow:3px 3px 0 #E8DCC8}
+html[data-theme=workshop] .stage{border-radius:6px;border:1.5px solid var(--line);box-shadow:3px 3px 0 #E8DCC8}
+html[data-theme=workshop] button.primary,html[data-theme=workshop] .tabs button.on{background:var(--accent);border-color:#B94A1B}
+html[data-theme=workshop] .drawer{fill:url(#grain);stroke:#8A6A45}
+html[data-theme=workshop] .top{background:#2B2723;color:#F4EEE3;border-bottom:0}
+html[data-theme=workshop] .top .brand p{color:#C9BBA8}
+html[data-theme=workshop] .top button,html[data-theme=workshop] .top .hdr-link{background:#3A342E;color:#F4EEE3;border-color:#4A433B}
+html[data-theme=workshop] .top button.primary{background:var(--accent);border-color:var(--accent)}
+
+html[data-theme=night]{--bg:#111418;--panel:#191D23;--ink:#E7ECF2;--muted:#8D99A8;--line:#2A3039;--accent:#19C2A0;--danger:#FF6B5E;--drawer:#1C2128;--field:#12161B;--ok:#3CCF91;--bedc:#0B0D10;color-scheme:dark}
+html[data-theme=night] body{background:var(--bg);color:var(--ink)}
+html[data-theme=night] .card,html[data-theme=night] .tabs,html[data-theme=night] .stage{border-radius:14px;border-color:var(--line);background:var(--panel)}
+html[data-theme=night] button.primary,html[data-theme=night] .tabs button.on{background:var(--accent);color:#06241D;border-color:var(--accent)}
+html[data-theme=night] .tabs button.on .step{color:#0E8A72}
+html[data-theme=night] .drawer{fill:#161A20;stroke:var(--accent);stroke-opacity:.55}
+html[data-theme=night] .bin text,html[data-theme=night] .pbin text{fill:#F1F5F9}
+html[data-theme=night] .bin rect.body{stroke:rgba(255,255,255,.22)}
+html[data-theme=night] .bin .fband{fill:rgba(255,255,255,.14)} html[data-theme=night] .bin .fline,html[data-theme=night] .bin .ftray{stroke:rgba(255,255,255,.45)}
+html[data-theme=night] .bin .bcirc{fill:rgba(0,0,0,.55)}
+html[data-theme=night] .top{background:#0C0F12;border-bottom-color:#20262E}
+html[data-theme=night] input,html[data-theme=night] select,html[data-theme=night] button{background:var(--field);color:var(--ink);border-color:var(--line)}
+html[data-theme=night] button.primary{background:var(--accent);color:#06241D}
+html[data-theme=night] h1,html[data-theme=night] h2{letter-spacing:.01em}
+html[data-theme=night] .selname,html[data-theme=night] .sum b{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace}
+
+html[data-theme=minimal]{--bg:#FFFFFF;--panel:#FFFFFF;--ink:#1F1B2E;--muted:#7C7891;--line:#ECEAF3;--accent:#7357F6;--danger:#E5484D;--drawer:#FAFAFD;--field:#FFFFFF;--ok:#2F9E6F;--bedc:#3B3850;color-scheme:light}
+html[data-theme=minimal] body{background:var(--bg);color:var(--ink)}
+html[data-theme=minimal] .card{border:1px solid var(--line);border-radius:16px;box-shadow:none;padding:16px}
+html[data-theme=minimal] .tabs{border:0;background:#F4F2FB;border-radius:999px}
+html[data-theme=minimal] .tabs button{border-radius:999px}
+html[data-theme=minimal] .stage{border:1px solid var(--line);border-radius:20px;box-shadow:none}
+html[data-theme=minimal] .top{border-bottom:1px solid var(--line)}
+html[data-theme=minimal] h1,html[data-theme=minimal] h2{font-weight:600;letter-spacing:-.015em}
+html[data-theme=minimal] button,html[data-theme=minimal] input,html[data-theme=minimal] select{border-radius:10px}
+html[data-theme=minimal] button.primary,html[data-theme=minimal] .tabs button.on{background:var(--accent);border-color:var(--accent)}
+html[data-theme=minimal] .drawer{fill:#FAFAFD;stroke:#C9C4DE;stroke-dasharray:6 5}
+html[data-theme=minimal] .bin rect.body{stroke:rgba(31,27,46,.16)}
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--panel);padding:9px 14px;border-radius:9px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;max-width:calc(100vw - 32px);text-align:center;z-index:10}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .infobar{position:absolute;left:12px;top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 8px 7px 12px;box-shadow:0 2px 10px rgba(0,0,0,.12);font-size:13px;z-index:2;max-width:min(520px,calc(100% - 300px))}
@@ -993,9 +1034,39 @@ function packing() {
 
 /* ================= 2D top view ================= */
 const svg = $('#plan');
-const dark = matchMedia('(prefers-color-scheme: dark)');
+const THEME_ID = (() => { const q = new URLSearchParams(location.search).get('theme'); return ['workshop', 'night', 'minimal'].includes(q) ? q : 'classic'; })();
+document.documentElement.dataset.theme = THEME_ID;
+const THEMES = {
+  classic: null,
+  workshop: { scheme: 'light', pal: ['#8FB08A', '#D98A66', '#E2BF7E', '#88A3BD', '#C99595', '#ABAE72', '#76AAA0', '#D3A055', '#A58CB0', '#B9C99F'],
+    wood: [0.66, 0.48, 0.31], wood2: [0.58, 0.40, 0.25], floor: [0.84, 0.72, 0.54], handle: 'knobs', metal: [0.24, 0.20, 0.17], bg3d: [0.957, 0.933, 0.89],
+    logo: '<rect x="1" y="1" width="32" height="32" rx="6" fill="#E0612A"/><g fill="#FFF3E6"><rect x="7" y="8" width="9" height="8" rx="1.5"/><rect x="18" y="8" width="9" height="8" rx="1.5"/><rect x="7" y="18" width="20" height="8" rx="1.5"/></g>' },
+  night: { scheme: 'dark', pal: ['#2EC4B6', '#FF6B6B', '#FFD166', '#4D96FF', '#C77DFF', '#06D6A0', '#FF9F1C', '#EF476F', '#8AC926', '#5BC0EB'],
+    wood: [0.15, 0.17, 0.20], wood2: [0.19, 0.215, 0.25], floor: [0.11, 0.125, 0.145], handle: 'strip', metal: [0.10, 0.76, 0.63], bg3d: [0.067, 0.078, 0.094],
+    logo: '<rect x="1" y="1" width="32" height="32" rx="10" fill="#0C0F12" stroke="#19C2A0" stroke-width="1.5"/><path d="M17 6l11 11-11 11L6 17z" fill="none" stroke="#19C2A0" stroke-width="2"/><path d="M17 11l6 6-6 6-6-6z" fill="#19C2A0"/>' },
+  minimal: { scheme: 'light', pal: ['#FFB5C2', '#A9DCFF', '#BFEFC0', '#FFE09A', '#D4C2FF', '#FFC9A6', '#AEEDE2', '#F5BDEE', '#CFE3B4', '#C6CCFF'],
+    wood: [0.93, 0.93, 0.955], wood2: [0.975, 0.975, 0.99], floor: [0.90, 0.90, 0.93], handle: 'bar', metal: [0.45, 0.34, 0.96], bg3d: [1, 1, 1],
+    logo: '<circle cx="17" cy="17" r="15" fill="none" stroke="#7357F6" stroke-width="2.5"/><rect x="10" y="10" width="6" height="6" rx="1.5" fill="#7357F6"/><rect x="18" y="10" width="6" height="14" rx="1.5" fill="#B9A9FF"/><rect x="10" y="18" width="6" height="6" rx="1.5" fill="#D9CFFF"/>' }
+};
+const TH = THEMES[THEME_ID];
+const darkMQ = matchMedia('(prefers-color-scheme: dark)');
+const dark = { get matches() { return TH ? TH.scheme === 'dark' : darkMQ.matches; }, addEventListener: (...a) => darkMQ.addEventListener && darkMQ.addEventListener(...a) };
+if (TH) document.querySelector('.brand svg').innerHTML = TH.logo;
+const hexRGB = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16) / 255);
+const mixRGB = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+const rgbCss = c => `rgb(${c.map(v => Math.round(v * 255)).join(' ')})`;
+const palRGB = i => hexRGB(TH.pal[(i - 1 + TH.pal.length * 99) % TH.pal.length]);
+// bin colours: k = 'base' | 'sel' | 'hov' | 'tray'
+function binRGB(i, k = 'base') {
+  if (!TH) return k === 'sel' ? hsl2rgb(hue(i), 85, 60) : k === 'hov' ? hsl2rgb(hue(i), 55, 80) : k === 'tray' ? hsl2rgb(hue(i), 35, 86) : hsl2rgb(hue(i), 55, 72);
+  const c = palRGB(i);
+  return k === 'sel' ? mixRGB(c, [0, 0, 0], 0.18) : k === 'hov' ? mixRGB(c, [1, 1, 1], 0.25) : k === 'tray' ? mixRGB(c, [1, 1, 1], 0.55) : c;
+}
+const bin2dLight = i => TH ? rgbCss(TH.scheme === 'dark' ? mixRGB(palRGB(i), [0.1, 0.11, 0.13], 0.55) : mixRGB(palRGB(i), [1, 1, 1], TH.pal[0] === '#FFB5C2' ? 0.15 : 0.45)) : `hsl(${hue(i)} 65% 85%)`;
+const binDot = i => TH ? rgbCss(palRGB(i)) : `hsl(${hue(i)} 55% 60%)`;
+const bg3d = () => TH ? TH.bg3d : null;
 const hue = i => (i * 137.508 + 205) % 360;
-const color2d = i => dark.matches ? `hsl(${hue(i)} 30% 33%)` : `hsl(${hue(i)} 65% 85%)`;
+const color2d = i => TH ? bin2dLight(i) : dark.matches ? `hsl(${hue(i)} 30% 33%)` : `hsl(${hue(i)} 65% 85%)`;
 let drag = null;
 
 function featureMarks(l, x, y, w, d, k) {
@@ -1033,7 +1104,8 @@ function render2D() {
   const bb = svg.getBoundingClientRect();
   const k = (bb.width > 0 && bb.height > 0) ? Math.max(vbW / bb.width, vbH / bb.height) : vbW / 800;
   const fs = 13 * k;
-  let h = `<rect class="drawer" x="0" y="0" width="${W}" height="${D}" rx="${3 * k}" stroke-width="${1.5 * k}"/>`;
+  let h = THEME_ID === 'workshop' ? `<defs><pattern id="grain" patternUnits="userSpaceOnUse" width="${W}" height="34"><rect width="${W}" height="34" fill="#D9BA8F"/><path d="M0 6 C ${W * 0.3} 2, ${W * 0.6} 11, ${W} 6 M0 19 C ${W * 0.25} 23, ${W * 0.7} 15, ${W} 20 M0 29 C ${W * 0.4} 26, ${W * 0.65} 32, ${W} 28" fill="none" stroke="#C9A473" stroke-width="1.4"/></pattern></defs>` : '';
+  h += `<rect class="drawer" x="0" y="0" width="${W}" height="${D}" rx="${3 * k}" stroke-width="${1.5 * k}"/>`;
   h += `<text class="dim" x="${W / 2}" y="${-pad * 0.4}" font-size="${fs}">${fmtU(W)} wide</text>`;
   h += `<text class="dim" transform="translate(${-pad * 0.4} ${D / 2}) rotate(-90)" font-size="${fs}">${fmtU(D)} deep</text>`;
   h += `<text class="dim front" x="${W / 2}" y="${D + pad * 0.45}" font-size="${fs * 0.9}">▼ FRONT ▼</text>`;
@@ -1818,7 +1890,7 @@ function model3mf(placed) {
   const matIdx = color => { let i = mats.indexOf(color); if (i < 0) { mats.push(color); i = mats.length - 1; } return i; };
   for (const p of placed) {
     const body = compact(p.m.V, p.m.T), hasText = p.m.TT.length > 0;
-    const bodyCol = S.binColors ? hslHex(hue(p.part.l.idx), 55, p.part.kind === 'tray' ? 80 : 70) : '#D0D4DB';
+    const bodyCol = S.binColors ? (TH ? '#' + binRGB(p.part.l.idx, p.part.kind === 'tray' ? 'tray' : 'base').map(v => Math.round(v * 255).toString(16).padStart(2, '0')).join('') : hslHex(hue(p.part.l.idx), 55, p.part.kind === 'tray' ? 80 : 70)) : '#D0D4DB';
     const bpid = useMat ? ` pid="100" pindex="${matIdx(bodyCol)}"` : '';
     const tr = (p.rot ? '0 1 0 -1 0 0 0 0 1' : '1 0 0 0 1 0 0 0 1') + ` ${f4(p.tx)} ${f4(p.ty)} 0`;
     if (S.numColor && hasText) {
@@ -1913,7 +1985,7 @@ function layoutCanvas() {
   rrPath(g, ox - 8, oy - 8, dw + 16, dh + 16, 12); g.fillStyle = '#e8ebf0'; g.fill(); g.lineWidth = 3; g.strokeStyle = '#98a2b3'; g.stroke();
   for (const l of L.leaves) {
     const gp = S.gap / 2, x = ox + (l.x + gp) * sc + 1.5, y = oy + (l.y + gp) * sc + 1.5, w = (l.w - S.gap) * sc - 3, h = (l.h - S.gap) * sc - 3;
-    rrPath(g, x, y, w, h, Math.min(S.radius * sc, 14)); g.fillStyle = `hsl(${hue(l.idx)} 65% 85%)`; g.fill();
+    rrPath(g, x, y, w, h, Math.min(S.radius * sc, 14)); g.fillStyle = bin2dLight(l.idx); g.fill();
     g.lineWidth = 2; g.strokeStyle = 'rgba(0,0,0,.35)'; g.stroke();
     const cx = x + w / 2, cy = y + h / 2, r = clamp(Math.min(w, h) * 0.16, 12, 36);
     const dims = `${fmt(l.pw)} × ${fmt(l.pd)}`, fs = Math.min(28, w * 0.85 / (0.58 * dims.length));
@@ -1931,7 +2003,7 @@ function layoutCanvas() {
   const colW = (CW - 2 * M) / cols, unit = S.unit === 'in' ? 'in' : 'mm';
   L.leaves.forEach((l, i) => {
     const col = Math.floor(i / rows), row = i % rows, x = M + col * colW, y = legendTop + 62 + row * rowH;
-    g.beginPath(); g.arc(x + 16, y, 16, 0, Math.PI * 2); g.fillStyle = `hsl(${hue(l.idx)} 55% 60%)`; g.fill();
+    g.beginPath(); g.arc(x + 16, y, 16, 0, Math.PI * 2); g.fillStyle = binDot(l.idx); g.fill();
     g.fillStyle = '#fff'; g.font = font(700, l.idx > 9 ? 15 : 18); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(l.idx), x + 16, y + 1);
     g.textAlign = 'left'; g.fillStyle = ink; g.font = font(500, 21);
     const tray = feat(l.n).tray && trayDims(l);
@@ -2074,7 +2146,7 @@ function drawPlate3D(cv, pl) {
   let maxH = 10;
   const placed = platePlacements(pl);
   for (const p of placed) {
-    const l = p.part.l, col = p.part.kind === 'tray' ? hsl2rgb(hue(l.idx), 35, 85) : hsl2rgb(hue(l.idx), 55, 72);
+    const l = p.part.l, col = p.part.kind === 'tray' ? binRGB(l.idx, 'tray') : binRGB(l.idx);
     pushBody(data, p.m, col, p.tx, p.ty, 0, p.rot);
     if (S.numColor && p.m.TT.length) pushMesh(data, p.m.V, p.m.TT, [0.15, 0.16, 0.19], p.tx, p.ty, 0, p.rot);
     maxH = Math.max(maxH, p.part.ph);
@@ -2091,7 +2163,7 @@ function drawPlate3D(cv, pl) {
   const M = mul(persp(0.6, w / h, dist * 0.05, dist * 4), view);
   const arr = new Float32Array(data);
   g.viewport(0, 0, W, H);
-  const bg = dk ? [0.071, 0.078, 0.094] : [0.953, 0.957, 0.969];
+  const bg = bg3d() || (dk ? [0.071, 0.078, 0.094] : [0.953, 0.957, 0.969]);
   g.clearColor(bg[0], bg[1], bg[2], 1); g.clear(g.COLOR_BUFFER_BIT | g.DEPTH_BUFFER_BIT); g.enable(g.DEPTH_TEST);
   g.useProgram(R.prog);
   g.uniformMatrix4fv(g.getUniformLocation(R.prog, 'm'), false, new Float32Array(M));
@@ -2136,7 +2208,7 @@ function renderPlates() {
       const p = it.p, l = p.l, x = S.plateMargin + pl.offX + it.x, y = by - (S.plateMargin + pl.offY + it.y + it.h);
       const sel = l.n.id === S.sel, rx = Math.min(S.radius, it.w / 2, it.h / 2);
       const fsz = Math.min(16 * k, it.w * 0.3, it.h * 0.35);
-      const fill = p.kind === 'tray' ? (dark.matches ? `hsl(${hue(l.idx)} 20% 45%)` : `hsl(${hue(l.idx)} 40% 93%)`) : color2d(l.idx);
+      const fill = p.kind === 'tray' ? (TH ? rgbCss(binRGB(l.idx, 'tray')) : dark.matches ? `hsl(${hue(l.idx)} 20% 45%)` : `hsl(${hue(l.idx)} 40% 93%)`) : color2d(l.idx);
       h += `<g class="pbin${sel ? ' sel' : ''}" data-leaf="${l.n.id}"><rect x="${x}" y="${y}" width="${it.w}" height="${it.h}" rx="${rx}" fill="${fill}" stroke-width="${(sel ? 3 : 1) * k}"${p.kind === 'tray' ? ` stroke-dasharray="${3 * k} ${2 * k}"` : ''}/>`;
       h += `<text x="${x + it.w / 2}" y="${y + it.h / 2}" font-size="${fsz}">${p.name}</text></g>`;
     }
@@ -2298,7 +2370,7 @@ const pushBox = (data, col, ...b) => { const m = boxMesh(...b); pushMesh(data, m
 function drawerParts(data) {
   const W = S.drawer.w, D = S.drawer.d, H = S.drawer.h;
   const t = clamp(Math.max(W, D) * 0.03, 10, 18), bt = 8, ov = 10, tf = t * 1.3;
-  const wood = [0.80, 0.65, 0.47], wood2 = [0.74, 0.58, 0.40], floor = [0.88, 0.78, 0.63], metal = [0.33, 0.35, 0.39];
+  const wood = TH ? TH.wood : [0.80, 0.65, 0.47], wood2 = TH ? TH.wood2 : [0.74, 0.58, 0.40], floor = TH ? TH.floor : [0.88, 0.78, 0.63], metal = TH ? TH.metal : [0.33, 0.35, 0.39];
   if (!S.showDrawer) { pushBox(data, [0.55, 0.57, 0.6], -W / 2, -D / 2, -4, W / 2, D / 2, 0); return; }
   pushBox(data, floor, -W / 2 - t, -D / 2, -bt, W / 2 + t, D / 2 + t, 0);
   pushBox(data, wood, -W / 2 - t, -D / 2, 0, -W / 2, D / 2 + t, H);
@@ -2306,6 +2378,14 @@ function drawerParts(data) {
   pushBox(data, wood, -W / 2, D / 2, 0, W / 2, D / 2 + t, H);
   pushBox(data, wood2, -W / 2 - t - ov, -D / 2 - tf, -bt - ov, W / 2 + t + ov, -D / 2, H + ov * 0.6);
   const bl = Math.min(W * 0.36, 170), zc = (H - bt) / 2, yF = -D / 2 - tf, ph = 6;
+  if (TH && TH.handle === 'knobs') {          // two wooden knobs
+    for (const x of [-W * 0.22, W * 0.22]) { pushBox(data, metal, x - 9, yF - 16, zc - 9, x + 9, yF, zc + 9); pushBox(data, wood2, x - 6, yF - 19, zc - 6, x + 6, yF - 15, zc + 6); }
+    return;
+  }
+  if (TH && TH.handle === 'strip') {          // a glowing finger-pull strip along the top of the front
+    pushBox(data, metal, -W * 0.42, yF - 2, H + ov * 0.6 - 7, W * 0.42, yF + 0.5, H + ov * 0.6 - 3);
+    return;
+  }
   pushBox(data, metal, -bl / 2, yF - 30, zc - ph, bl / 2, yF - 22, zc + ph);
   pushBox(data, metal, -bl / 2 + 4, yF - 24, zc - ph + 2, -bl / 2 + 14, yF, zc + ph - 2);
   pushBox(data, metal, bl / 2 - 14, yF - 24, zc - ph + 2, bl / 2 - 4, yF, zc + ph - 2);
@@ -2317,7 +2397,7 @@ function buildMain() {
     const fl = focusLayout();
     for (const { p, cx } of fl.items) {
       const l = p.l, m = partMesh(p);
-      const col = p.kind === 'tray' ? hsl2rgb(hue(l.idx), 35, 85) : !fitsBed(p) ? [0.92, 0.42, 0.38] : hsl2rgb(hue(l.idx), 55, 72);
+      const col = p.kind === 'tray' ? binRGB(l.idx, 'tray') : !fitsBed(p) ? [0.92, 0.42, 0.38] : binRGB(l.idx);
       pushBody(data, m, col, cx, 0, 0);
       if (m.TT.length) pushMesh(data, m.V, m.TT, S.numColor ? [0.15, 0.16, 0.19] : col.map(v => v * 0.6), cx, 0, 0);
       if (p.kind === 'bin') pushContents(data, l, cx, 0, 2500);
@@ -2328,8 +2408,8 @@ function buildMain() {
   for (const p of partsList()) {
     const l = p.l, r = binWorldRect(l), cx = (r.x0 + r.x1) / 2, cy = (r.y0 + r.y1) / 2;
     const sel = l.n.id === S.sel, hov = hoverBin === l.n.id && !sel;
-    let col = !fitsBed(l) ? [0.92, 0.42, 0.38] : hsl2rgb(hue(l.idx), sel ? 85 : 55, sel ? 60 : hov ? 80 : 72);
-    if (p.kind === 'tray') col = hsl2rgb(hue(l.idx), 35, 88);
+    let col = !fitsBed(l) ? [0.92, 0.42, 0.38] : binRGB(l.idx, sel ? 'sel' : hov ? 'hov' : 'base');
+    if (p.kind === 'tray') col = binRGB(l.idx, 'tray');
     const m = partMesh(p), oz = p.kind === 'tray' ? l.ph - p.ph : 0;
     pushBody(data, m, col, cx, cy, oz);
     if (m.TT.length) pushMesh(data, m.V, m.TT, S.numColor ? [0.15, 0.16, 0.19] : col.map(v => v * 0.6), cx, cy, oz);
@@ -2436,7 +2516,7 @@ function draw3D() {
     if (canvas.width !== Math.round(cw * dpr) || canvas.height !== Math.round(ch * dpr)) { canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr); }
     V3 = cameraFrame();
     gl.viewport(0, 0, canvas.width, canvas.height);
-    const bg = dark.matches ? [0.106, 0.118, 0.141] : [0.965, 0.97, 0.98];
+    const bg = bg3d() || (dark.matches ? [0.106, 0.118, 0.141] : [0.965, 0.97, 0.98]);
     gl.clearColor(bg[0], bg[1], bg[2], 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); gl.enable(gl.DEPTH_TEST);
     gl.useProgram(prog);
     gl.uniformMatrix4fv(gl.getUniformLocation(prog, 'm'), false, new Float32Array(V3.M));
@@ -2959,7 +3039,7 @@ function miniShow(key) {
     const view = [x[0], y[0], z[0], 0, x[1], y[1], z[1], 0, x[2], y[2], z[2], 0, -dot(x, eye), -dot(y, eye), -dot(z, eye), 1];
     const M = mul(persp(0.6, cw / ch, dist * 0.05, dist * 4), view);
     g.viewport(0, 0, cv.width, cv.height);
-    const bg = dark.matches ? [0.071, 0.078, 0.094] : [0.953, 0.957, 0.969];
+    const bg = bg3d() || (dark.matches ? [0.071, 0.078, 0.094] : [0.953, 0.957, 0.969]);
     g.clearColor(bg[0], bg[1], bg[2], 1); g.clear(g.COLOR_BUFFER_BIT | g.DEPTH_BUFFER_BIT); g.enable(g.DEPTH_TEST);
     g.useProgram(mini.prog);
     g.uniformMatrix4fv(g.getUniformLocation(mini.prog, 'm'), false, new Float32Array(M));
