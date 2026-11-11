@@ -150,10 +150,13 @@ kbd{font:11px ui-monospace,Consolas,monospace;border:1px solid var(--line);borde
 .plates-head h3{margin:0;font-size:15px}
 .plates-head p{margin:2px 0 0;color:var(--muted);font-size:12.5px}
 .plate-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.plate{margin:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px}
+.plate{position:relative;margin:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px}
 .plate svg{width:100%;height:auto;display:block}
 .plate canvas.pl3d{width:100%;height:230px;display:block;border-radius:8px;cursor:grab;touch-action:none}
 .plate canvas.pl3d:active{cursor:grabbing}
+.pl-tags{position:absolute;pointer-events:none;overflow:hidden}
+.pl-tags span{position:absolute;transform:translate(-50%,-50%);min-width:20px;height:20px;padding:0 5px;box-sizing:border-box;border-radius:10px;background:#1b1f27;color:#fff;font:700 11.5px/20px system-ui,sans-serif;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.pl-tags span.t{background:#fff;color:#1b1f27;border:1.5px solid #1b1f27;line-height:17px}
 .plate figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;display:flex;justify-content:space-between;gap:8px}
 .plate figcaption b{color:var(--ink)}
 .plate.over{border-color:var(--danger)}
@@ -1217,8 +1220,29 @@ function buildBody(o) {
   for (let k = 1; k < o.dy; k++) divYs.push(yi0 + k * id / o.dy);
   if (o.divTop > F + 1) {
     for (const x of divXs) {
-      const inN = Math.abs(x) < nw / 2 + wt && useNotch;
-      addBox(x - wt / 2, inN && o.notchF ? yi0 : yi0 - e, F - e, x + wt / 2, inN && o.notchB ? yi1 : yi1 + e, o.divTop);
+      // A divider that runs into a lift notch steps down to the notch bottom near that wall, then ramps back up
+      // at 45°, so the notch stays open for fingers instead of being split by a full-height fin.
+      const xa = x - wt / 2, xb = x + wt / 2, zN = H - depthAt(Math.max(0, Math.abs(x) - wt / 2)) - 0.4;
+      const low = useNotch && zN < o.divTop - 0.5;
+      const cutF = low && o.notchF, cutB = low && o.notchB;
+      const Ln = Math.min(nd + 4, id * 0.22), ramp = o.divTop - zN;
+      let ya = yi0 - e, yb = yi1 + e;
+      if (cutF || cutB) {
+        const room = id - (cutF ? Ln + ramp : 0) - (cutB ? Ln + ramp : 0);
+        if (room < 2) { addBox(xa, ya, F - e, xb, yb, Math.min(o.divTop, zN)); continue; }   // short bin: keep it low all the way
+        const yz = (u, v, t) => [t, u, v];
+        if (cutF) {
+          addBox(xa, ya, F - e, xb, yi0 + Ln, zN);
+          prism([[yi0 + Ln - e, F - e], [yi0 + Ln + ramp, F - e], [yi0 + Ln + ramp, o.divTop], [yi0 + Ln - e, zN]], xa, xb, yz);
+          ya = yi0 + Ln + ramp - e;
+        }
+        if (cutB) {
+          addBox(xa, yi1 - Ln, F - e, xb, yb, zN);
+          prism([[yi1 - Ln - ramp, F - e], [yi1 - Ln + e, F - e], [yi1 - Ln + e, zN], [yi1 - Ln - ramp, o.divTop]], xa, xb, yz);
+          yb = yi1 - Ln - ramp + e;
+        }
+      }
+      addBox(xa, ya, F - e, xb, yb, o.divTop);
     }
     for (const y of divYs) addBox(xi0 - e, y - wt / 2, F - e, xi1 + e, y + wt / 2, o.divTop);
   }
@@ -1830,8 +1854,8 @@ function multiPlate3mf(P) {
   let nextId = 1;
   const files = [], objs = [], items = [], cfgObjs = [], cfgPlates = [], cfgAsm = [], rels = [];
   P.plates.forEach((pl, pi) => {
-    const ox = (pi % cols) * sx, oy = -Math.floor(pi / cols) * sy, inst = [];
-    for (const p of platePlacements(pl)) {
+    const ox = (pi % cols) * sx, oy = -Math.floor(pi / cols) * sy, inst = [], pls = platePlacements(pl);
+    for (const p of pls) {
       const parts = [{ name: p.m.label, mesh: compact(p.m.V, p.m.T) }];
       if (S.numColor && p.m.TT.length) parts.push({ name: p.m.label + ' - number', mesh: compact(p.m.V, p.m.TT) });
       const subIds = parts.map(() => nextId++), objId = nextId++, path = `/3D/Objects/object_${objId}.model`;
@@ -1846,7 +1870,7 @@ function multiPlate3mf(P) {
       inst.push(`    <model_instance>\n      <metadata key="object_id" value="${objId}"/>\n      <metadata key="instance_id" value="0"/>\n      <metadata key="identify_id" value="${objId * 10}"/>\n    </model_instance>\n`);
       cfgAsm.push(`   <assemble_item object_id="${objId}" instance_id="0" transform="${tr}" offset="0 0 0"/>\n`);
     }
-    cfgPlates.push(`  <plate>\n    <metadata key="plater_id" value="${pi + 1}"/>\n    <metadata key="plater_name" value="Plate ${pi + 1}"/>\n    <metadata key="locked" value="false"/>\n${inst.join('')}  </plate>\n`);
+    cfgPlates.push(`  <plate>\n    <metadata key="plater_id" value="${pi + 1}"/>\n    <metadata key="plater_name" value="${xmlEsc((pls.length > 1 ? 'Bins ' : 'Bin ') + pls.map(p => p.part.name).join(', '))}"/>\n    <metadata key="locked" value="false"/>\n${inst.join('')}  </plate>\n`);
   });
   const model = `<?xml version="1.0" encoding="UTF-8"?>\n<model unit="millimeter" xml:lang="en-US" ${BBS_NS}>\n` +
     `<metadata name="Application">BambuStudio-01.09.00.00</metadata>\n<metadata name="BambuStudio:3mfVersion">1</metadata>\n<metadata name="Title">${xmlEsc(baseName())}</metadata>\n<metadata name="Designer">Drawer Bin Designer</metadata>\n` +
@@ -1922,7 +1946,8 @@ function drawPlate3D(cv, pl) {
   const g = R.g, bx = S.bed.x, by = S.bed.y, data = [], dk = dark.matches;
   pushBox(data, dk ? [0.16, 0.17, 0.2] : [0.24, 0.25, 0.29], 0, 0, -2, bx, by, 0);
   let maxH = 10;
-  for (const p of platePlacements(pl)) {
+  const placed = platePlacements(pl);
+  for (const p of placed) {
     const l = p.part.l, col = p.part.kind === 'tray' ? hsl2rgb(hue(l.idx), 35, 85) : hsl2rgb(hue(l.idx), 55, 72);
     pushBody(data, p.m, col, p.tx, p.ty, 0, p.rot);
     if (S.numColor && p.m.TT.length) pushMesh(data, p.m.V, p.m.TT, [0.15, 0.16, 0.19], p.tx, p.ty, 0, p.rot);
@@ -1948,6 +1973,17 @@ function drawPlate3D(cv, pl) {
   ['p', 'n', 'c'].map(a => g.getAttribLocation(R.prog, a)).forEach((l, i) => { g.enableVertexAttribArray(l); g.vertexAttribPointer(l, 3, g.FLOAT, false, 36, i * 12); });
   g.drawArrays(g.TRIANGLES, 0, arr.length / 9);
   const c2 = cv.getContext('2d'); c2.clearRect(0, 0, W, H); c2.drawImage(R.cv, 0, 0);
+  // part numbers on top of each part
+  const fig = cv.parentElement;
+  let tags = fig.querySelector('.pl-tags');
+  if (!tags) { tags = document.createElement('div'); tags.className = 'pl-tags'; fig.appendChild(tags); }
+  tags.style.cssText = `left:${cv.offsetLeft}px;top:${cv.offsetTop}px;width:${w}px;height:${h}px`;
+  tags.innerHTML = placed.map(p => {
+    const v = [p.tx, p.ty, p.part.ph + 1];
+    const cx = M[0] * v[0] + M[4] * v[1] + M[8] * v[2] + M[12], cy = M[1] * v[0] + M[5] * v[1] + M[9] * v[2] + M[13], cw = M[3] * v[0] + M[7] * v[1] + M[11] * v[2] + M[15];
+    if (cw <= 0) return '';
+    return `<span class="${p.part.kind === 'tray' ? 't' : ''}" style="left:${((cx / cw) * 0.5 + 0.5) * w}px;top:${(0.5 - (cy / cw) * 0.5) * h}px">${p.part.name}</span>`;
+  }).join('');
   return true;
 }
 function drawAllPlates() {
