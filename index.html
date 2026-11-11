@@ -454,9 +454,27 @@ kbd{font:11px ui-monospace,Consolas,monospace;border:1px solid var(--line);borde
 const $ = s => document.querySelector(s);
 const STORE = 'drawer-bin-designer.v1';
 
+/* Bambu Studio's own system presets for each Bambu printer (machine, process, filament).
+   The one-file 3MF names them, so Bambu Studio accepts the project and opens every plate,
+   with your printer and Bambu PLA Basic already selected. Names as in Bambu Studio's profiles/BBL.json. */
+const BBL = {
+  'bambu-a1mini': ['Bambu Lab A1 mini', 'Bambu Lab A1 mini 0.4 nozzle', '0.20mm Standard @BBL A1M', 'Bambu PLA Basic @BBL A1M'],
+  'bambu-a1': ['Bambu Lab A1', 'Bambu Lab A1 0.4 nozzle', '0.20mm Standard @BBL A1', 'Bambu PLA Basic @BBL A1'],
+  'bambu-p1s': ['Bambu Lab P1S', 'Bambu Lab P1S 0.4 nozzle', '0.20mm Standard @BBL X1C', 'Bambu PLA Basic @BBL P1S 0.4 nozzle'],
+  'bambu-p1p': ['Bambu Lab P1P', 'Bambu Lab P1P 0.4 nozzle', '0.20mm Standard @BBL P1P', 'Bambu PLA Basic @BBL P1P'],
+  'bambu-x1c': ['Bambu Lab X1 Carbon', 'Bambu Lab X1 Carbon 0.4 nozzle', '0.20mm Standard @BBL X1C', 'Bambu PLA Basic @BBL X1C'],
+  'bambu-p2s': ['Bambu Lab P2S', 'Bambu Lab P2S 0.4 nozzle', '0.20mm Standard @BBL P2S', 'Bambu PLA Basic @BBL P2S'],
+  'bambu-h2s': ['Bambu Lab H2S', 'Bambu Lab H2S 0.4 nozzle', '0.20mm Standard @BBL H2S', 'Bambu PLA Basic @BBL H2S'],
+  'bambu-h2d': ['Bambu Lab H2D', 'Bambu Lab H2D 0.4 nozzle', '0.20mm Standard @BBL H2D', 'Bambu PLA Basic @BBL H2D', 2]
+};
 const PRINTERS = [
   ['bambu-a1mini', 'Bambu Lab A1 mini', 180, 180, 180],
-  ['bambu-256', 'Bambu Lab A1 / P1S / P1P / X1C / P2S', 256, 256, 256],
+  ['bambu-a1', 'Bambu Lab A1', 256, 256, 256],
+  ['bambu-p1s', 'Bambu Lab P1S', 256, 256, 256],
+  ['bambu-p1p', 'Bambu Lab P1P', 256, 256, 256],
+  ['bambu-x1c', 'Bambu Lab X1 Carbon / X1E', 256, 256, 256],
+  ['bambu-p2s', 'Bambu Lab P2S', 256, 256, 256],
+  ['bambu-h2s', 'Bambu Lab H2S', 340, 320, 340],
   ['bambu-h2d', 'Bambu Lab H2D', 350, 320, 325],
   ['prusa-mini', 'Prusa MINI+', 180, 180, 180],
   ['prusa-mk4', 'Prusa MK4S / MK3S+', 250, 210, 220],
@@ -545,7 +563,7 @@ function defaultState() {
   return {
     unit: 'mm', drawer: { w: 400, d: 450, h: 70 }, binH: null,
     wall: 1.2, floor: 1.2, radius: 3, clearance: 0.5, gap: 0.5, snap: 1,
-    printer: 'bambu-256', bed: { x: 256, y: 256, z: 256 }, plateGap: 5, plateMargin: 3,
+    printer: 'bambu-p1s', bed: { x: 256, y: 256, z: 256 }, plateGap: 5, plateMargin: 3,
     fmtOut: '3mf', showDrawer: true, plateMode: 'pack',
     emboss: true, embSize: 8, embPos: 'corner', addImg: true, oneFile: true,
     pockets: 'none', scoopR: 15, trayH: 20, divH: 100, floorPat: 'none', patSize: 1, numColor: false, binColors: false,
@@ -1848,6 +1866,32 @@ async function downloadLayout() { download(baseName() + '_layout.png', await lay
 /* ----- one 3MF holding every plate (Bambu Studio / OrcaSlicer project layout) ----- */
 const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); }));
 const BBS_NS = 'xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" xmlns:BambuStudio="http://schemas.bambulab.com/package/2021" xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06" requiredextensions="p"';
+/* Project settings for the one-file 3MF.
+   Bambu Studio (2.8+) rejects project settings that don't name a Bambu printer and then loads the shapes only, on one plate.
+   For a Bambu printer we name its system presets with "inherits" and no changed settings, so Bambu Studio fills in
+   everything from its own presets: nothing about the printer, process or filament is changed.
+   Filament 2 (the number inlay) is only listed when the numbers get a second colour. */
+function projectSettings() {
+  const b = BBL[S.printer], two = S.numColor;
+  const cols = two ? ['#E8E8E8', '#1B1F27'] : ['#E8E8E8'];
+  if (!b) return JSON.stringify({   // other printers: just the bed (Bambu Studio loads the shapes on one plate; press Arrange)
+    from: 'project', name: 'project_settings', version: '02.00.00.00', printer_technology: 'FFF',
+    printable_area: ['0x0', `${num(S.bed.x, 2)}x0`, `${num(S.bed.x, 2)}x${num(S.bed.y, 2)}`, `0x${num(S.bed.y, 2)}`],
+    printable_height: num(S.bed.z, 2)
+  }, null, 4);
+  const [model, machine, process, filament, nozzles = 1] = b, fil = cols.map(() => filament);
+  return JSON.stringify({
+    from: 'project', name: 'project_settings', version: '02.00.00.00', printer_technology: 'FFF',
+    printer_model: model, printer_settings_id: machine, print_settings_id: process, filament_settings_id: fil,
+    inherits_group: [process, ...fil, machine],
+    different_settings_to_system: ['', ...fil.map(() => ''), ''],
+    filament_colour: cols,
+    filament_self_index: cols.map((c, i) => String(i + 1)),
+    filament_extruder_variant: cols.map(() => 'Direct Drive Standard'),
+    nozzle_diameter: Array(nozzles).fill('0.4'),
+    extruder_type: Array(nozzles).fill('Direct Drive')
+  }, null, 4);
+}
 function multiPlate3mf(P) {
   const n = P.plates.length, v = Math.sqrt(n), cols = v > Math.round(v) ? Math.round(v) + 1 : Math.round(v);
   const sx = S.bed.x * 1.2, sy = S.bed.y * 1.2;        // the slicers lay plates out on a grid with a 20 % gap
@@ -1873,7 +1917,7 @@ function multiPlate3mf(P) {
     cfgPlates.push(`  <plate>\n    <metadata key="plater_id" value="${pi + 1}"/>\n    <metadata key="plater_name" value="${xmlEsc((pls.length > 1 ? 'Bins ' : 'Bin ') + pls.map(p => p.part.name).join(', '))}"/>\n    <metadata key="locked" value="false"/>\n${inst.join('')}  </plate>\n`);
   });
   const model = `<?xml version="1.0" encoding="UTF-8"?>\n<model unit="millimeter" xml:lang="en-US" ${BBS_NS}>\n` +
-    `<metadata name="Application">BambuStudio-01.09.00.00</metadata>\n<metadata name="BambuStudio:3mfVersion">1</metadata>\n<metadata name="Title">${xmlEsc(baseName())}</metadata>\n<metadata name="Designer">Drawer Bin Designer</metadata>\n` +
+    `<metadata name="Application">BambuStudio-02.00.00.00</metadata>\n<metadata name="BambuStudio:3mfVersion">1</metadata>\n<metadata name="Title">${xmlEsc(baseName())}</metadata>\n<metadata name="Designer">Drawer Bin Designer</metadata>\n` +
     `<resources>\n${objs.join('')}</resources>\n<build p:UUID="${uuid()}">\n${items.join('')}</build>\n</model>\n`;
   const cfg = `<?xml version="1.0" encoding="UTF-8"?>\n<config>\n${cfgObjs.join('')}${cfgPlates.join('')}  <assemble>\n${cfgAsm.join('')}  </assemble>\n</config>\n`;
   return zipU8([
@@ -1883,14 +1927,8 @@ function multiPlate3mf(P) {
     { name: '3D/_rels/3dmodel.model.rels', data: '<?xml version="1.0" encoding="UTF-8"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">\n' + rels.map((r, i) => ` <Relationship Target="${r}" Id="rel-${i + 1}" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/>`).join('\n') + '\n</Relationships>' },
     ...files,
     { name: 'Metadata/model_settings.config', data: cfg },
-    // Bambu Studio / OrcaSlicer only read the plates when the file also carries project settings.
-    // Keep them minimal: just the bed size, so the plates line up; the user picks printer / filament in the slicer.
-    { name: 'Metadata/project_settings.config', data: JSON.stringify({
-      from: 'project', name: 'project_settings', version: '01.09.00.00',
-      printer_technology: 'FFF',
-      printable_area: ['0x0', `${num(S.bed.x, 2)}x0`, `${num(S.bed.x, 2)}x${num(S.bed.y, 2)}`, `0x${num(S.bed.y, 2)}`],
-      printable_height: num(S.bed.z, 2)
-    }, null, 4) }
+    // Bambu Studio only opens the plates when it accepts the project settings (see projectSettings).
+    { name: 'Metadata/project_settings.config', data: projectSettings() }
   ]);
 }
 async function downloadPlates() {
@@ -2600,6 +2638,7 @@ function syncInputs() {
   $('#sh').placeholder = selLeaf() ? fmt(defH()) : '';
   $('#sSnap').value = String(S.snap);
   if (![...$('#sSnap').options].some(o => o.value === String(S.snap))) $('#sSnap').value = '1';
+  if (S.printer === 'bambu-256') S.printer = 'bambu-p1s';   // older saved designs: the shared 256 mm entry
   printerSel.value = PRINTERS.some(p => p[0] === S.printer) ? S.printer : 'custom';
   $('#showDrawer').checked = S.showDrawer !== false;
   $('#embNum').checked = !!S.emboss; $('#embPos').value = S.embPos; $('#embOpts').hidden = !S.emboss;
@@ -2716,7 +2755,7 @@ const HELP = (() => {
       svg: S0(top() + '<path class="al" d="M40 46 H220 M76 46 V130 M112 46 V130 M148 46 V130 M184 46 V130"/>', 'Example: cutlery drawer') },
     share: { t: 'Design codes', d: 'Turns your whole design into a short code. Paste it in a MakerWorld comment or send it to a friend; they paste it here and get exactly your layout.',
       svg: S0('<rect class="w" x="20" y="50" width="150" height="40" rx="8"/><text x="32" y="75" style="font:600 13px ui-monospace,monospace;fill:var(--ink)">DBDZq3xK9v…</text><path class="al" d="M176 70 H214"/><path class="a" d="M214 62 L228 70 L214 78 Z"/>', 'Copy → paste anywhere → paste back here') },
-    onefile: { t: 'All plates in one file', d: 'Instead of a ZIP with one file per plate, you get a single 3MF. Bambu Studio and OrcaSlicer open it with every plate already set up, whether the parts are packed together or one per plate. If you enabled the second number colour, the number is already a separate part set to filament 2. Other slicers load it as one plate; press Arrange there.',
+    onefile: { t: 'All plates in one file', d: 'Instead of a ZIP with one file per plate, you get a single 3MF. Bambu Studio opens it with every plate already set up, whether the parts are packed together or one per plate, with your Bambu printer, 0.20 mm Standard and Bambu PLA Basic selected (change them as usual). For this, pick your exact Bambu printer above. If you enabled the second number colour, the number is already a separate part set to filament 2. Other slicers load it as one plate; press Arrange there.',
       svg: '' },
     plates: { t: 'Plates', d: '<b>Pack together</b> fits as many parts as possible on each plate (fewest prints). <b>One per plate</b> gives every part its own file, handy for printing one at a time.',
       svg: S0('<rect x="15" y="20" width="105" height="105" rx="6" style="fill:#2d3138"/><rect x="22" y="27" width="45" height="40" rx="3" style="fill:#f2b8c6"/><rect x="71" y="27" width="42" height="56" rx="3" style="fill:#bfe8c0"/><rect x="22" y="71" width="45" height="47" rx="3" style="fill:#c7c8f2"/><rect x="140" y="20" width="105" height="105" rx="6" style="fill:#2d3138"/><rect x="170" y="50" width="45" height="45" rx="3" style="fill:#f2b8c6"/>', 'Pack together · One per plate') },
