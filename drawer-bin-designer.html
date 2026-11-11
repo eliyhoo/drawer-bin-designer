@@ -192,6 +192,43 @@ kbd{font:11px ui-monospace,Consolas,monospace;border:1px solid var(--line);borde
 .hdr-link{display:inline-flex;align-items:center;font:inherit;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:8px;padding:7px 11px;text-decoration:none;white-space:nowrap}
 .hdr-link:hover{border-color:var(--accent)}
 .privacy{font-size:11.5px;color:var(--muted);margin:0 4px;order:99}
+/* side panel: three steps as tabs */
+.side{gap:10px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;position:sticky;top:0;z-index:5}
+.tabs button{border:0;background:transparent;border-radius:9px;padding:8px 6px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:7px;color:var(--muted)}
+.tabs button .step{background:var(--line);color:var(--muted)}
+.tabs button:hover{color:var(--ink)}
+.tabs button.on{background:var(--accent);color:#fff}
+.tabs button.on .step{background:#fff;color:var(--accent)}
+.pane{display:flex;flex-direction:column;gap:10px}
+.pane[hidden]{display:none!important}
+.selname{color:var(--accent)}
+.soft{text-transform:none;letter-spacing:0;font-weight:500}
+.or{display:flex;align-items:center;gap:10px;margin:12px 0 8px;color:var(--muted);font-size:12px}
+.or::before,.or::after{content:"";flex:1;border-top:1px solid var(--line)}
+label.grow{flex:1}
+.span2{grid-column:1/-1}
+button.small{padding:4px 10px;font-size:12.5px}
+details.card.more summary{font-size:13.5px;color:var(--ink)}
+details.card.more:not([open]){padding-top:11px;padding-bottom:11px}
+.hb{width:15px;height:15px;font-size:10px;border-width:1px;color:var(--muted);border-color:currentColor;opacity:.75}
+.hb:hover,.hb:focus-visible{opacity:1;background:var(--accent);border-color:var(--accent);color:#fff}
+.choice{display:grid;grid-template-columns:1fr;gap:6px}
+.choice button{display:flex;align-items:center;gap:8px;text-align:left;padding:8px 10px;border-radius:9px;line-height:1.2}
+.choice button::before{content:"";width:14px;height:14px;border-radius:50%;border:1.5px solid var(--muted);flex:none;box-sizing:border-box}
+.choice button.on::before{border:4px solid var(--accent)}
+.choice button b{font-size:13px}
+.choice button small{font-size:11.5px;color:var(--muted);margin-left:auto}
+.choice button.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;background:color-mix(in srgb,var(--accent) 8%,var(--field))}
+.pick{display:flex;flex-wrap:wrap;gap:6px}
+.pick button{min-width:38px;height:32px;padding:0 9px;border-radius:16px;font-weight:650;display:inline-flex;align-items:center;justify-content:center;gap:5px}
+.pick button i{width:9px;height:9px;border-radius:50%;flex:none}
+.pick button.off{opacity:.45;text-decoration:line-through;background:transparent}
+.pick button.on{border-color:var(--ink)}
+.btns.tight{gap:12px}
+button.big{padding:11px 14px;font-size:15px}
+.also{margin-top:10px;font-size:12.5px;color:var(--muted)}
+.also .link{font-size:12.5px}
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--panel);padding:9px 14px;border-radius:9px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;max-width:calc(100vw - 32px);text-align:center;z-index:10}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .infobar{position:absolute;left:12px;top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 8px 7px 12px;box-shadow:0 2px 10px rgba(0,0,0,.12);font-size:13px;z-index:2;max-width:min(520px,calc(100% - 300px))}
@@ -242,186 +279,227 @@ kbd{font:11px ui-monospace,Consolas,monospace;border:1px solid var(--line);borde
 
 <main class="app">
   <aside class="side">
-    <section class="card">
-      <div class="card-h">
-        <h2><span class="step">1</span> Drawer inside size</h2>
-        <div class="seg" id="unitSeg" role="group" aria-label="Units">
-          <button data-unit="mm">mm</button><button data-unit="in">inch</button>
+    <nav class="tabs" id="sideTabs" role="tablist" aria-label="Steps">
+      <button role="tab" data-tab="drawer"><span class="step">1</span>Drawer</button>
+      <button role="tab" data-tab="bin"><span class="step">2</span>Bins</button>
+      <button role="tab" data-tab="print"><span class="step">3</span>Print</button>
+    </nav>
+
+    <!-- ============ 1. DRAWER ============ -->
+    <div class="pane" id="pane-drawer" role="tabpanel">
+      <section class="card">
+        <div class="card-h">
+          <h2>Inside size of your drawer</h2>
+          <div class="seg" id="unitSeg" role="group" aria-label="Units">
+            <button data-unit="mm">mm</button><button data-unit="in">inch</button>
+          </div>
         </div>
-      </div>
-      <div class="g3">
-        <label>Width<input id="dw" type="number" step="any" inputmode="decimal"></label>
-        <label>Depth<input id="dd" type="number" step="any" inputmode="decimal"></label>
-        <label>Height<input id="dh" type="number" step="any" inputmode="decimal"></label>
-      </div>
-      <div class="g2 mt">
-        <label>Bin height (all bins)<input id="bh" type="number" step="any" inputmode="decimal"></label>
-      </div>
-      <p class="hint">Measure the inside of the drawer. Width = left to right, depth = front to back.</p>
-    </section>
-
-    <section class="card">
-      <h2><span class="step">2</span> Start with a grid</h2>
-      <div class="row">
-        <label>Columns<input id="gc" type="number" min="1" max="20" value="3"></label>
-        <label>Rows<input id="gr" type="number" min="1" max="20" value="3"></label>
-        <button id="mkGrid" class="primary">Create</button>
-      </div>
-      <p class="hint">Then drag the lines (or the handles in 3D) between bins to resize them. The neighbouring bins adjust so there's never any empty space. Ready-made templates are in step 4.</p>
-    </section>
-
-    <section class="card">
-      <h2><span class="step">3</span> Selected bin <span id="selName" style="color:var(--muted);font-weight:500"></span></h2>
-      <div class="g3">
-        <label>Width<input id="sw" type="number" step="any" inputmode="decimal"></label>
-        <label>Depth<input id="sd" type="number" step="any" inputmode="decimal"></label>
-        <label>Height<input id="sh" type="number" step="any" inputmode="decimal"></label>
-      </div>
-      <div class="split-line">
-        <span>Split into</span>
-        <select id="splitN" aria-label="Number of parts"><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
-        <button id="splitCols" title="Split side by side (C)">▥ Columns</button>
-        <button id="splitRows" title="Split front to back (R)">▤ Rows</button>
-      </div>
-      <div class="btns mt">
-        <button id="equal" title="Make this bin and its neighbours in the same group the same size">Equal sizes</button>
-        <button id="remove" class="danger" title="Remove this bin; its neighbour takes the space (Delete)">Merge into neighbour</button>
-      </div>
-      <button id="focusBtn" class="wide mt" title="Or double-click any bin">View this bin on its own in 3D</button>
-      <p class="hint">Click a bin in the top view or in 3D to select it. Double-click it to see it on its own. Type a size and press Enter, and the other bins make room.</p>
-    </section>
-
-    <section class="card" id="extras">
-      <h2><span class="step">4</span> Additional features</h2>
-      <div class="sub-h">Selected bin <span id="selName2" style="text-transform:none;letter-spacing:0"></span></div>
-      <div class="g2">
-        <label><span>Finger scoop <button class="hb" data-help="scoop" aria-label="What is this?">i</button></span><select id="fScoop"><option value="none">None</option><option value="front">Front</option><option value="back">Back</option><option value="both">Front + back</option></select></label>
-        <label><span>Lift notch in the wall <button class="hb" data-help="notch" aria-label="What is this?">i</button></span><select id="fNotch"><option value="none">None</option><option value="front">Front</option><option value="back">Back</option><option value="both">Front + back</option></select></label>
-        <label><span>Inner dividers: columns <button class="hb" data-help="dividers" aria-label="What is this?">i</button></span><input id="fDx" type="number" min="1" max="10" step="1"></label>
-        <label>Inner dividers: rows<input id="fDy" type="number" min="1" max="10" step="1"></label>
-        <label><span>Floor thickness (mm) <button class="hb" data-help="floor" aria-label="What is this?">i</button></span><input id="fFloor" type="number" step="0.2" min="0.4"><button class="link small" id="fFloorAll" type="button">Use for all bins</button></label>
-        <label><span>Floor pattern <button class="hb" data-help="pattern" aria-label="What is this?">i</button></span>
-          <select id="fPat"><option value="none">Solid floor</option><option value="hex">Honeycomb</option><option value="round">Round holes</option><option value="square">Squares</option><option value="diamond">Diamonds</option><option value="slot">Slots</option></select>
-          <button class="link small" id="fPatAll" type="button">Use for all bins</button>
-        </label>
-      </div>
-      <label class="check"><input type="checkbox" id="fLabel"> <span>Label holder (an angled tab under the front rim) <button class="hb" data-help="label" aria-label="What is this?">i</button></span></label>
-      <label class="check"><input type="checkbox" id="fTray"> Removable top tray: rests on a ledge inside the bin, with finger notches to lift it out (printed as an extra part) <button class="hb" data-help="tray" aria-label="What is this?">i</button></label>
-      <div class="sub-h">What goes in it? (preview only)</div>
-      <label><span>Item <button class="hb" data-help="contents" aria-label="What is this?">i</button></span><select id="fItem"></select></label>
-      <div class="g3 mt" id="custBox">
-        <label>Length (mm)<input id="cL" type="number" step="any" min="1"></label>
-        <label>Width (mm)<input id="cW" type="number" step="any" min="1"></label>
-        <label>Height (mm)<input id="cH" type="number" step="any" min="0.5"></label>
-      </div>
-      <p class="hint" id="itemInfo">Pick an item to see how many fit in the selected bin. It doesn't change the printed part.</p>
-
-      <div class="sub-h">Small separators</div>
-      <div class="g2">
-        <label><span>Type <button class="hb" data-help="sep" aria-label="What is this?">i</button></span>
-          <select id="fSep"><option value="none">None</option><option value="ribs">Short ribs from the walls</option><option value="cradle">Cradles for round items</option><option value="comb">Comb: slots for flat items</option><option value="pegs">Pegs</option></select>
-        </label>
-        <label>Direction
-          <select id="fSepDir"><option value="auto">Automatic</option><option value="y">Front to back</option><option value="x">Left to right</option></select>
-        </label>
-      </div>
-      <div id="sepBox">
-        <label class="check"><input type="checkbox" id="fSepAuto"> Size them to the item chosen above</label>
-        <div class="g3 mt" id="sepManual">
-          <label id="lSepN">Ribs per wall<input id="fSepN" type="number" step="1" min="1"></label>
-          <label id="lSepD"><span id="tSepD">Width (mm)</span><input id="fSepD" type="number" step="0.5" min="0.8"></label>
-          <label id="lSepH">Height (mm)<input id="fSepH" type="number" step="1" min="3"></label>
-          <label id="lSepLen">Rib length (%)<input id="fSepLen" type="number" step="5" min="5" max="50"></label>
-          <label id="lSepGap">Spacing (mm)<input id="fSepGap" type="number" step="1" min="5"></label>
+        <div class="g3">
+          <label>Width<input id="dw" type="number" step="any" inputmode="decimal"></label>
+          <label>Depth<input id="dd" type="number" step="any" inputmode="decimal"></label>
+          <label>Height<input id="dh" type="number" step="any" inputmode="decimal"></label>
         </div>
-        <p class="hint" id="sepInfo"></p>
-      </div>
-      <button id="fAll" class="wide mt">Copy this bin's features to all bins</button>
+        <p class="hint">Width is left to right, depth is front to back.</p>
+      </section>
 
-      <div class="sub-h">All bins</div>
-      <div class="g2">
-        <label><span>Wall thickness (mm) <button class="hb" data-help="wall" aria-label="What is this?">i</button></span><input id="gWall" type="number" step="0.2" min="0.4"></label>
-        <label><span>Pockets under the bins <button class="hb" data-help="pockets" aria-label="What is this?">i</button></span>
-          <select id="gPockets"><option value="none">None</option><option value="feet">Rubber feet Ø10 × 1 mm</option><option value="mag6">Magnets Ø6 × 2 mm</option><option value="mag8">Magnets Ø8 × 3 mm</option></select>
-        </label>
-        <label><span>Scoop size (mm) <button class="hb" data-help="scoop" aria-label="What is this?">i</button></span><input id="gScoop" type="number" step="1" min="3"></label>
-        <label><span>Tray height (mm) <button class="hb" data-help="tray" aria-label="What is this?">i</button></span><input id="gTrayH" type="number" step="1" min="6"></label>
-        <label><span>Inner divider height (%) <button class="hb" data-help="dividers" aria-label="What is this?">i</button></span><input id="gDivH" type="number" step="5" min="10" max="100"></label>
-        <label><span>Floor hole size <button class="hb" data-help="pattern" aria-label="What is this?">i</button></span>
-          <select id="gPatSize"><option value="0.7">Small</option><option value="1">Medium</option><option value="1.4">Large</option></select>
-        </label>
-      </div>
-      <p class="hint">Floor thickness and the floor pattern are set per bin, above. Use "Use for all bins" to copy them to every bin.</p>
+      <section class="card">
+        <h2>Start with</h2>
+        <div class="row">
+          <label>Columns<input id="gc" type="number" min="1" max="20" value="3"></label>
+          <label>Rows<input id="gr" type="number" min="1" max="20" value="3"></label>
+          <button id="mkGrid" class="primary">Make grid</button>
+        </div>
+        <div class="or"><span>or a ready-made layout</span></div>
+        <div class="row">
+          <label class="grow" aria-label="Template"><select id="tpl"></select></label>
+          <button id="tplApply">Use it</button>
+        </div>
+        <p class="hint">Then drag the lines between bins. The others adjust, so the drawer is always full.</p>
+      </section>
 
-      <div class="sub-h">3MF files</div>
-      <label class="check"><input type="checkbox" id="gNumColor"> Fill the engraved numbers with a second colour (separate part, for AMS) <button class="hb" data-help="numcolor" aria-label="What is this?">i</button></label>
-      <label class="check"><input type="checkbox" id="gBinColors"> Save each bin's colour in the 3MF <button class="hb" data-help="bincolors" aria-label="What is this?">i</button></label>
+      <section class="card">
+        <h2>Share a design <button class="hb" data-help="share" aria-label="What is this?">i</button></h2>
+        <div class="btns">
+          <button id="shareCopy">Copy design code</button>
+          <button id="sharePaste">Paste a code</button>
+        </div>
+      </section>
 
-      <div class="sub-h">Templates &amp; sharing <button class="hb" data-help="share" aria-label="What is this?">i</button></div>
-      <div class="row">
-        <label><span>Start from a template <button class="hb" data-help="templates" aria-label="What is this?">i</button></span><select id="tpl"></select></label>
-        <button id="tplApply">Apply</button>
-      </div>
-      <div class="btns mt">
-        <button id="shareCopy">Copy design code</button>
-        <button id="sharePaste">Paste design code</button>
-      </div>
-      <p class="hint">Templates keep your drawer size. Share the code with a friend or post it on MakerWorld, and they can paste it here to get your exact design.</p>
-    </section>
+      <details class="card more" id="moreDrawer">
+        <summary>Fit &amp; dragging</summary>
+        <div class="g2">
+          <label>Bin height<input id="bh" type="number" step="any" inputmode="decimal"></label>
+          <label>Gap between bins (mm)<input id="sGap" type="number" step="0.1" min="0"></label>
+          <label>Clearance to drawer, each side (mm)<input id="sClr" type="number" step="0.1" min="0"></label>
+          <label>Snap while dragging
+            <select id="sSnap">
+              <option value="0">Off</option><option value="0.5">0.5 mm</option><option value="1">1 mm</option>
+              <option value="5">5 mm</option><option value="10">10 mm</option>
+              <option value="1.5875">1/16 inch</option><option value="3.175">1/8 inch</option><option value="6.35">1/4 inch</option>
+            </select>
+          </label>
+        </div>
+        <p class="hint">Bin height is the same for every bin; leave it empty to use the drawer height minus 1 mm.</p>
+      </details>
+    </div>
 
-    <section class="card">
-      <h2><span class="step">5</span> Printer &amp; download</h2>
-      <label>Your printer<select id="printer"></select></label>
-      <div class="g3 mt">
-        <label>Bed X (mm)<input id="sBx" type="number" step="1" min="50"></label>
-        <label>Bed Y (mm)<input id="sBy" type="number" step="1" min="50"></label>
-        <label>Bed Z (mm)<input id="sBz" type="number" step="1" min="20"></label>
-      </div>
-      <div class="sum" id="summary"></div>
-      <button id="autoSplit" class="warnbtn wide" hidden>Auto-split oversized bins</button>
-      <div class="fmt-line mt">
-        <span>Plates <button class="hb" data-help="plates" aria-label="What is this?">i</button></span>
-        <div class="seg" id="modeSeg"><button data-mode="pack" title="Fit as many parts as possible on each plate">Pack together</button><button data-mode="single" title="Every part gets its own plate / file">One per plate</button></div>
-      </div>
-      <div class="fmt-line">
-        <span>File format</span>
-        <div class="seg" id="fmtSeg"><button data-fmt="3mf">3MF</button><button data-fmt="stl">STL</button></div>
-      </div>
-      <label class="check" id="oneFileRow"><input type="checkbox" id="oneFile"> All plates in one 3MF file, opens as separate plates in Bambu Studio / OrcaSlicer <button class="hb" data-help="onefile" aria-label="What is this?">i</button></label>
-      <label class="check"><input type="checkbox" id="embNum"> Engrave each bin's number into its floor <button class="hb" data-help="emboss" aria-label="What is this?">i</button></label>
-      <div class="g2 subopts" id="embOpts">
-        <label>Number height (mm)<input id="embSize" type="number" step="0.5" min="3"></label>
-        <label>Position<select id="embPos"><option value="corner">Front-left corner</option><option value="center">Centre</option></select></label>
-      </div>
-      <label class="check"><input type="checkbox" id="addImg"> Include a layout picture (.png) with the numbers <button class="hb" data-help="layoutimg" aria-label="What is this?">i</button></label>
-      <button id="dlPlates" class="primary wide mt">Download print plates</button>
-      <div class="btns mt">
-        <button id="dlZip" title="One STL file per part, in a .zip">Each part (.zip)</button>
-        <button id="dlSel" title="Just the selected bin (and its tray)">Selected bin</button>
-        <button id="dlImg" title="Picture of the layout with bin numbers">Layout (.png)</button>
-      </div>
-      <p class="hint">Parts are packed onto as few plates as possible for your printer, one file per plate, ready to slice.</p>
-    </section>
+    <!-- ============ 2. BINS ============ -->
+    <div class="pane" id="pane-bin" role="tabpanel" hidden>
+      <section class="card">
+        <div class="card-h">
+          <h2>Bin <span id="selName" class="selname"></span></h2>
+          <button id="focusBtn" class="small" title="Or double-click any bin">View alone</button>
+        </div>
+        <div class="g3">
+          <label>Width<input id="sw" type="number" step="any" inputmode="decimal"></label>
+          <label>Depth<input id="sd" type="number" step="any" inputmode="decimal"></label>
+          <label>Height<input id="sh" type="number" step="any" inputmode="decimal"></label>
+        </div>
+        <div class="split-line">
+          <span>Split into</span>
+          <select id="splitN" aria-label="Number of parts"><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
+          <button id="splitCols" title="Split side by side (C)">▥ Columns</button>
+          <button id="splitRows" title="Split front to back (R)">▤ Rows</button>
+        </div>
+        <div class="btns mt">
+          <button id="equal" title="Make this bin and its neighbours in the same group the same size">Equal sizes</button>
+          <button id="remove" class="danger" title="Remove this bin; its neighbour takes the space (Delete)">Merge into neighbour</button>
+        </div>
+        <p class="hint">Click a bin in the drawer to pick it. Type a size and press Enter; the other bins make room.</p>
+      </section>
 
-    <p class="privacy" id="privacyNote" hidden>This site counts anonymous visits and downloads with GoatCounter. No cookies, no personal data.</p>
-    <details class="card" id="settings">
-      <summary>Print settings</summary>
-      <div class="g2">
-        <label>Corner radius (mm)<input id="sRad" type="number" step="0.5" min="0"></label>
-        <label>Gap between bins (mm)<input id="sGap" type="number" step="0.1" min="0"></label>
-        <label>Drawer clearance, per side (mm)<input id="sClr" type="number" step="0.1" min="0"></label>
-        <label>Snap while dragging
-          <select id="sSnap">
-            <option value="0">Off</option><option value="0.5">0.5 mm</option><option value="1">1 mm</option>
-            <option value="5">5 mm</option><option value="10">10 mm</option>
-            <option value="1.5875">1/16 inch</option><option value="3.175">1/8 inch</option><option value="6.35">1/4 inch</option>
-          </select>
-        </label>
-        <label>Space between parts on plate (mm)<input id="sPg" type="number" step="0.5" min="1"></label>
-        <label>Plate edge margin (mm)<input id="sPm" type="number" step="0.5" min="0"></label>
-      </div>
-      <p class="hint">Wall and floor thickness are in step 4 (Additional features).</p>
-    </details>
+      <section class="card" id="extras">
+        <h2>Features of bin <span id="selName2" class="selname"></span></h2>
+        <div class="g2">
+          <label><span>Finger scoop <button class="hb" data-help="scoop" aria-label="What is this?">i</button></span><select id="fScoop"><option value="none">None</option><option value="front">Front</option><option value="back">Back</option><option value="both">Front + back</option></select></label>
+          <label><span>Lift notch <button class="hb" data-help="notch" aria-label="What is this?">i</button></span><select id="fNotch"><option value="none">None</option><option value="front">Front</option><option value="back">Back</option><option value="both">Front + back</option></select></label>
+          <label><span>Dividers: columns <button class="hb" data-help="dividers" aria-label="What is this?">i</button></span><input id="fDx" type="number" min="1" max="10" step="1"></label>
+          <label>Dividers: rows<input id="fDy" type="number" min="1" max="10" step="1"></label>
+          <label class="span2"><span>Floor <button class="hb" data-help="pattern" aria-label="What is this?">i</button></span>
+            <select id="fPat"><option value="none">Solid</option><option value="hex">Honeycomb holes</option><option value="round">Round holes</option><option value="square">Square holes</option><option value="diamond">Diamond holes</option><option value="slot">Slots</option></select>
+            <button class="link small" id="fPatAll" type="button">Use for all bins</button>
+          </label>
+        </div>
+        <label class="check"><input type="checkbox" id="fLabel"> <span>Label holder under the front rim <button class="hb" data-help="label" aria-label="What is this?">i</button></span></label>
+        <label class="check"><input type="checkbox" id="fTray"> <span>Removable top tray (an extra part) <button class="hb" data-help="tray" aria-label="What is this?">i</button></span></label>
+        <button id="fAll" class="wide mt">Copy these features to all bins</button>
+      </section>
+
+      <details class="card more" id="moreBin">
+        <summary>More for this bin</summary>
+        <div class="sub-h">What goes in it? <span class="soft">(preview only)</span></div>
+        <label><span>Item <button class="hb" data-help="contents" aria-label="What is this?">i</button></span><select id="fItem"></select></label>
+        <div class="g3 mt" id="custBox">
+          <label>Length (mm)<input id="cL" type="number" step="any" min="1"></label>
+          <label>Width (mm)<input id="cW" type="number" step="any" min="1"></label>
+          <label>Height (mm)<input id="cH" type="number" step="any" min="0.5"></label>
+        </div>
+        <p class="hint" id="itemInfo">Pick an item to see how many fit. It doesn't change the printed part.</p>
+
+        <div class="sub-h">Small separators</div>
+        <div class="g2">
+          <label><span>Type <button class="hb" data-help="sep" aria-label="What is this?">i</button></span>
+            <select id="fSep"><option value="none">None</option><option value="ribs">Short ribs from the walls</option><option value="cradle">Cradles for round items</option><option value="comb">Comb: slots for flat items</option><option value="pegs">Pegs</option></select>
+          </label>
+          <label>Direction
+            <select id="fSepDir"><option value="auto">Automatic</option><option value="y">Front to back</option><option value="x">Left to right</option></select>
+          </label>
+        </div>
+        <div id="sepBox">
+          <label class="check"><input type="checkbox" id="fSepAuto"> Size them to the item above</label>
+          <div class="g3 mt" id="sepManual">
+            <label id="lSepN">Ribs per wall<input id="fSepN" type="number" step="1" min="1"></label>
+            <label id="lSepD"><span id="tSepD">Width (mm)</span><input id="fSepD" type="number" step="0.5" min="0.8"></label>
+            <label id="lSepH">Height (mm)<input id="fSepH" type="number" step="1" min="3"></label>
+            <label id="lSepLen">Rib length (%)<input id="fSepLen" type="number" step="5" min="5" max="50"></label>
+            <label id="lSepGap">Spacing (mm)<input id="fSepGap" type="number" step="1" min="5"></label>
+          </div>
+          <p class="hint" id="sepInfo"></p>
+        </div>
+
+        <div class="sub-h">Floor</div>
+        <div class="g2">
+          <label><span>Floor thickness (mm) <button class="hb" data-help="floor" aria-label="What is this?">i</button></span><input id="fFloor" type="number" step="0.2" min="0.4"><button class="link small" id="fFloorAll" type="button">Use for all bins</button></label>
+        </div>
+      </details>
+
+      <details class="card more" id="allBins">
+        <summary>Settings for all bins</summary>
+        <div class="g2">
+          <label><span>Wall thickness (mm) <button class="hb" data-help="wall" aria-label="What is this?">i</button></span><input id="gWall" type="number" step="0.2" min="0.4"></label>
+          <label>Corner radius (mm)<input id="sRad" type="number" step="0.5" min="0"></label>
+          <label><span>Pockets underneath <button class="hb" data-help="pockets" aria-label="What is this?">i</button></span>
+            <select id="gPockets"><option value="none">None</option><option value="feet">Rubber feet Ø10 × 1 mm</option><option value="mag6">Magnets Ø6 × 2 mm</option><option value="mag8">Magnets Ø8 × 3 mm</option></select>
+          </label>
+          <label>Floor hole size
+            <select id="gPatSize"><option value="0.7">Small</option><option value="1">Medium</option><option value="1.4">Large</option></select>
+          </label>
+          <label>Scoop size (mm)<input id="gScoop" type="number" step="1" min="3"></label>
+          <label>Tray height (mm)<input id="gTrayH" type="number" step="1" min="6"></label>
+          <label>Divider height (%)<input id="gDivH" type="number" step="5" min="10" max="100"></label>
+        </div>
+      </details>
+    </div>
+
+    <!-- ============ 3. PRINT ============ -->
+    <div class="pane" id="pane-print" role="tabpanel" hidden>
+      <section class="card">
+        <h2>Your printer</h2>
+        <select id="printer" aria-label="Your printer"></select>
+        <div class="g3 mt" id="bedBox">
+          <label>Bed X (mm)<input id="sBx" type="number" step="1" min="50"></label>
+          <label>Bed Y (mm)<input id="sBy" type="number" step="1" min="50"></label>
+          <label>Bed Z (mm)<input id="sBz" type="number" step="1" min="20"></label>
+        </div>
+        <div class="sum" id="summary"></div>
+        <button id="autoSplit" class="warnbtn wide" hidden>Auto-split oversized bins</button>
+      </section>
+
+      <section class="card">
+        <div class="card-h">
+          <h2>What to print</h2>
+          <div class="btns tight"><button class="link" id="pickAll" type="button">All</button><button class="link" id="pickNone" type="button">None</button></div>
+        </div>
+        <div class="pick" id="printPick"></div>
+        <p class="hint" id="pickInfo">Tap a number to leave that bin out.</p>
+      </section>
+
+      <section class="card">
+        <h2>Download</h2>
+        <div class="choice" id="dlModeSeg" role="radiogroup" aria-label="Files">
+          <button data-dl="one" role="radio"><b>One file</b><small>All plates in one 3MF</small></button>
+          <button data-dl="plate" role="radio"><b>A file per plate</b><small>ZIP of 3MF or STL</small></button>
+          <button data-dl="part" role="radio"><b>A file per bin</b><small>ZIP of STL files</small></button>
+        </div>
+        <div class="fmt-line mt" id="modeLine">
+          <span>Plates <button class="hb" data-help="plates" aria-label="What is this?">i</button></span>
+          <div class="seg" id="modeSeg"><button data-mode="pack" title="Fit as many parts as possible on each plate">Pack together</button><button data-mode="single" title="Every part gets its own plate">One bin per plate</button></div>
+        </div>
+        <div class="fmt-line" id="fmtLine">
+          <span>File type</span>
+          <div class="seg" id="fmtSeg"><button data-fmt="3mf">3MF</button><button data-fmt="stl">STL</button></div>
+        </div>
+        <label class="check"><input type="checkbox" id="embNum"> <span>Engrave each bin's number into its floor <button class="hb" data-help="emboss" aria-label="What is this?">i</button></span></label>
+        <div class="g2 subopts" id="embOpts">
+          <label>Number height (mm)<input id="embSize" type="number" step="0.5" min="3"></label>
+          <label>Position<select id="embPos"><option value="corner">Front-left corner</option><option value="center">Centre</option></select></label>
+        </div>
+        <label class="check"><input type="checkbox" id="addImg"> <span>Add a layout picture with the numbers <button class="hb" data-help="layoutimg" aria-label="What is this?">i</button></span></label>
+        <button id="dlPlates" class="primary wide big mt">Download</button>
+        <div class="also">Also: <button class="link" id="dlImg" type="button">layout picture</button> · <button class="link" id="dlSel" type="button">just bin <span id="selName3"></span></button></div>
+      </section>
+
+      <details class="card more" id="morePrint">
+        <summary>Colours &amp; plate spacing</summary>
+        <label class="check"><input type="checkbox" id="gNumColor"> <span>Fill the numbers with a second colour (AMS) <button class="hb" data-help="numcolor" aria-label="What is this?">i</button></span></label>
+        <label class="check"><input type="checkbox" id="gBinColors"> <span>Save each bin's colour in the 3MF <button class="hb" data-help="bincolors" aria-label="What is this?">i</button></span></label>
+        <div class="g2 mt">
+          <label>Space between parts (mm)<input id="sPg" type="number" step="0.5" min="1"></label>
+          <label>Plate edge margin (mm)<input id="sPm" type="number" step="0.5" min="0"></label>
+        </div>
+      </details>
+      <p class="privacy" id="privacyNote" hidden>This site counts anonymous visits and downloads with GoatCounter. No cookies, no personal data.</p>
+    </div>
   </aside>
 
   <section class="stage">
@@ -565,7 +643,7 @@ function defaultState() {
     wall: 1.2, floor: 1.2, radius: 3, clearance: 0.5, gap: 0.5, snap: 1,
     printer: 'bambu-p1s', bed: { x: 256, y: 256, z: 256 }, plateGap: 5, plateMargin: 3,
     fmtOut: '3mf', showDrawer: true, plateMode: 'pack',
-    emboss: true, embSize: 8, embPos: 'corner', addImg: true, oneFile: true,
+    emboss: true, embSize: 8, embPos: 'corner', addImg: true, dlMode: 'one', skip: [],
     pockets: 'none', scoopR: 15, trayH: 20, divH: 100, floorPat: 'none', patSize: 1, numColor: false, binColors: false,
     tree: split('x', [
       split('y', [leaf(), leaf(), leaf()]),
@@ -588,6 +666,9 @@ function fromObj(o) {
   s.drawer = Object.assign(defaultState().drawer, o.drawer || {});
   s.bed = Object.assign(defaultState().bed, o.bed || {});
   if (o.honey && !o.floorPat) s.floorPat = 'hex';
+  if (!o.dlMode) s.dlMode = o.oneFile === false ? 'plate' : 'one';
+  if (!Array.isArray(s.skip)) s.skip = [];
+  delete s.oneFile;
   delete s.honey;
   return s;
 }
@@ -665,6 +746,9 @@ function trayDims(l) {
   const w = l.pw - 2 * S.wall - 0.8, d = l.pd - 2 * S.wall - 0.8, h = Math.min(S.trayH, (l.ph - S.floor) * 0.6);
   return w >= 15 && d >= 15 && h >= 6 ? { w, d, h } : null;
 }
+// The parts that will be printed: everything except bins left out in "What to print"
+const printing = l => !S.skip.includes(l.n.id);
+const printParts = () => partsList().filter(p => printing(p.l));
 function partsList() {
   const out = [];
   for (const l of L.leaves) {
@@ -676,7 +760,7 @@ function partsList() {
 
 /* ================= history ================= */
 const undoStack = [], redoStack = [];
-function snapshot() { const { sel, unit, fmtOut, showDrawer, plateMode, addImg, oneFile, ...rest } = S; return JSON.stringify(rest); }
+function snapshot() { const { sel, unit, fmtOut, showDrawer, plateMode, addImg, dlMode, skip, ...rest } = S; return JSON.stringify(rest); }
 function commitFrom(before) {
   if (before != null && before !== snapshot()) { undoStack.push(before); if (undoStack.length > 200) undoStack.shift(); redoStack.length = 0; }
   saveLocal();
@@ -692,7 +776,7 @@ function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.ad
 /* ================= editing actions ================= */
 let L = computeLayout();
 function selLeaf() { return L.leaves.find(l => l.n.id === S.sel); }
-function select(id) { if (S.sel === id) return; S.sel = id; saveLocal(); renderAll(); }
+function select(id) { if (curTab === 'drawer') setTab('bin'); if (S.sel === id) return; S.sel = id; saveLocal(); renderAll(); }
 
 function splitSel(dir) {
   const l = selLeaf(); if (!l) return;
@@ -867,7 +951,7 @@ function packGlobal(items, PW, PH, sp, heur) {
 }
 let packCache = { key: '', res: null };
 function packing() {
-  const B = usableBed(), sp = Math.max(0, S.plateGap), parts = partsList();
+  const B = usableBed(), sp = Math.max(0, S.plateGap), parts = printParts();
   const key = JSON.stringify([parts.map(p => [p.key, p.pw, p.pd, p.ph]), S.bed, sp, S.plateMargin, S.plateMode]);
   if (packCache.key === key) return packCache.res;
   const ok = parts.filter(fitsBed), oversize = parts.filter(p => !fitsBed(p));
@@ -1679,7 +1763,7 @@ function binWorldRect(l) {
   const W = S.drawer.w, D = S.drawer.d, g = S.gap / 2;
   return { x0: l.x + g - W / 2, x1: l.x + l.w - g - W / 2, y0: D / 2 - (l.y + l.h - g), y1: D / 2 - (l.y + g) };
 }
-const grams = () => partsList().reduce((a, p) => a + Math.max(0, partMesh(p).vol), 0) / 1000 * 1.24;
+const grams = () => printParts().reduce((a, p) => a + Math.max(0, partMesh(p).vol), 0) / 1000 * 1.24;
 
 /* ================= export ================= */
 function placeMesh(pl) {
@@ -1854,8 +1938,8 @@ function layoutCanvas() {
     const txt = `${fmt(l.pw)} × ${fmt(l.pd)} × ${fmt(l.ph)} ${unit}${tray ? ' + tray' : ''}`, tw = g.measureText(txt).width;
     g.fillText(txt, x + 44, y + 1);
     const pl = plateOf[l.n.id];
-    g.fillStyle = pl ? muted : '#d92d20'; g.font = font(400, 18);
-    g.fillText(`· ${pl ? 'plate ' + pl : "doesn't fit printer"}`, x + 44 + tw + 8, y + 1);
+    g.fillStyle = pl || !printing(l) ? muted : '#d92d20'; g.font = font(400, 18);
+    g.fillText(`· ${pl ? 'plate ' + pl : !printing(l) ? 'not printed' : "doesn't fit printer"}`, x + 44 + tw + 8, y + 1);
   });
   g.textAlign = 'right'; g.fillStyle = '#98a2b3'; g.font = font(400, 16); g.textBaseline = 'alphabetic';
   g.fillText('Drawer Bin Designer', CW - M, CH - 20);
@@ -1931,11 +2015,21 @@ function multiPlate3mf(P) {
     { name: 'Metadata/project_settings.config', data: projectSettings() }
   ]);
 }
+async function downloadParts() {   // one STL per part, in a ZIP
+  const parts = printParts();
+  if (!parts.length) { toast('Pick at least one bin to print.'); return; }
+  const files = parts.map(p => { const m = partMesh(p); return { name: m.file + '.stl', data: stlBytes([{ V: m.V, T: m.T }]) }; });
+  if (S.addImg) files.push({ name: baseName() + '_layout.png', data: await layoutPNG() });
+  if (files.length === 1) download(files[0].name, files[0].data, 'model/stl');
+  else download(baseName() + '_each-bin_stl.zip', zipU8(files));
+}
 async function downloadPlates() {
+  if (S.dlMode === 'part') return downloadParts();
   const P = packing(), n = P.plates.length;
+  if (!printParts().length) { toast('Pick at least one bin to print.'); return; }
   if (!n) { toast('None of the parts fit on this printer. Use Auto-split first.'); return; }
-  const stl = S.fmtOut === 'stl';
-  if (!stl && S.oneFile) {
+  const stl = S.dlMode === 'plate' && S.fmtOut === 'stl';
+  if (S.dlMode === 'one') {
     download(`${baseName()}_${n}-plate${n > 1 ? 's' : ''}.3mf`, multiPlate3mf(P));
     if (S.addImg) { const png = await layoutPNG(); setTimeout(() => download(baseName() + '_layout.png', png, 'image/png'), 600); }
     if (P.oversize.length) toast(`${P.oversize.length} part${P.oversize.length > 1 ? 's were' : ' was'} left out: too big for your printer.`);
@@ -1950,14 +2044,8 @@ async function downloadPlates() {
   else download(`${baseName()}_${n}-plate${n > 1 ? 's' : ''}_${stl ? 'stl' : '3mf'}.zip`, zipU8(files));
   if (P.oversize.length) toast(`${P.oversize.length} part${P.oversize.length > 1 ? 's were' : ' was'} left out: too big for your printer.`);
 }
-$('#dlPlates').onclick = () => { track('download-plates-' + (S.fmtOut === 'stl' ? 'stl' : S.oneFile ? '3mf-one-file' : '3mf')); downloadPlates(); };
+$('#dlPlates').onclick = () => { track('download-plates-' + (S.dlMode === 'one' ? '3mf-one-file' : S.dlMode === 'part' ? 'each-bin-stl' : S.fmtOut)); downloadPlates(); };
 $('#dlImg').onclick = () => { track('download-layout-png'); downloadLayout(); };
-$('#dlZip').onclick = async () => {
-  track('download-each-part');
-  const files = partsList().map(p => { const m = partMesh(p); return { name: m.file + '.stl', data: stlBytes([{ V: m.V, T: m.T }]) }; });
-  if (S.addImg) files.push({ name: baseName() + '_layout.png', data: await layoutPNG() });
-  download(baseName() + '_each-part_stl.zip', zipU8(files));
-};
 $('#dlSel').onclick = () => {
   track('download-selected-bin');
   const ps = partsList().filter(p => p.l.n.id === S.sel); if (!ps.length) return;
@@ -2610,7 +2698,14 @@ $('#gBinColors').onchange = e => mutate(() => { S.binColors = e.target.checked; 
 $('#embNum').onchange = e => mutate(() => { S.emboss = e.target.checked; });
 $('#embPos').onchange = e => mutate(() => { S.embPos = e.target.value; });
 $('#addImg').onchange = e => { S.addImg = e.target.checked; saveLocal(); updatePanel(); };
-$('#oneFile').onchange = e => { S.oneFile = e.target.checked; saveLocal(); updatePanel(); };
+document.querySelectorAll('#dlModeSeg button').forEach(b => b.onclick = () => { S.dlMode = b.dataset.dl; saveLocal(); updatePanel(); });
+$('#printPick').addEventListener('click', e => {
+  const b = e.target.closest('button[data-leaf]'); if (!b) return;
+  const id = b.dataset.leaf; S.skip = S.skip.includes(id) ? S.skip.filter(x => x !== id) : [...S.skip, id];
+  saveLocal(); renderAll();
+});
+$('#pickAll').onclick = () => { S.skip = []; saveLocal(); renderAll(); };
+$('#pickNone').onclick = () => { S.skip = L.leaves.map(l => l.n.id); saveLocal(); renderAll(); };
 $('#sSnap').addEventListener('change', e => { S.snap = +e.target.value; saveLocal(); });
 const tplSel = $('#tpl');
 tplSel.innerHTML = TEMPLATES.map(t => `<option value="${t[0]}">${t[1]}</option>`).join('');
@@ -2670,7 +2765,7 @@ function syncInputs() {
 function updatePanel() {
   const l = selLeaf();
   $('#selName').textContent = l ? `#${l.idx}` : '';
-  $('#selName2').textContent = l ? `#${l.idx}` : '';
+  $('#selName2').textContent = $('#selName3').textContent = l ? `#${l.idx}` : '';
   const p = l && pathTo(S.tree, l.n.id);
   const hasX = p && p.slice(0, -1).some(n => n.dir === 'x'), hasY = p && p.slice(0, -1).some(n => n.dir === 'y');
   $('#sw').disabled = !hasX; $('#sw').title = hasX ? '' : 'Spans the full drawer width';
@@ -2678,11 +2773,12 @@ function updatePanel() {
   $('#remove').disabled = !p || p.length < 2;
   $('#equal').disabled = !p || p.length < 2;
   syncInputs();
-  const n = L.leaves.length, P = packing(), np = P.plates.length, B = usableBed(), trays = P.parts.length - n;
+  const n = L.leaves.length, P = packing(), np = P.plates.length, B = usableBed(), trays = P.parts.length - L.leaves.filter(printing).length;
   const wide = P.parts.filter(q => !fitsRect(q.pw, q.pd, B.x, B.y)).length, tall = P.parts.filter(q => q.ph > S.bed.z + 1e-6).length;
   const small = L.leaves.filter(tooSmall).length;
-  let h = `<span><b>${n}</b> bin${n === 1 ? '' : 's'}${trays ? ` + <b>${trays}</b> tray${trays > 1 ? 's' : ''}` : ''} · about <b>${Math.round(grams())} g</b> of PLA</span>`;
-  h += `<span>Fits on <b>${np} plate${np === 1 ? '' : 's'}</b> · <button class="link" id="seePlates">see plates</button></span>`;
+  const nPrint = L.leaves.filter(printing).length;
+  let h = `<span>${nPrint < n ? `Printing <b>${nPrint}</b> of ${n} bins` : `<b>${n}</b> bin${n === 1 ? '' : 's'}`}${trays ? ` + <b>${trays}</b> tray${trays > 1 ? 's' : ''}` : ''} · about <b>${Math.round(grams())} g</b> of PLA</span>`;
+  if (nPrint) h += `<span>Fits on <b>${np} plate${np === 1 ? '' : 's'}</b> · <button class="link" id="seePlates">see plates</button></span>`;
   if (wide) h += `<span class="warn">⚠ ${wide} part${wide > 1 ? 's are' : ' is'} bigger than this printer's bed.</span>`;
   if (tall) h += `<span class="warn">⚠ ${tall} part${tall > 1 ? 's are' : ' is'} taller than this printer can print.</span>`;
   if (small) h += `<span class="warn">⚠ ${small} bin${small > 1 ? 's are' : ' is'} very small.</span>`;
@@ -2691,11 +2787,15 @@ function updatePanel() {
   if (!wide && !tall && !small) h += `<span class="good">✓ Everything fits your printer.</span>`;
   $('#summary').innerHTML = h;
   const ab = $('#autoSplit'); ab.hidden = !wide; ab.textContent = `Auto-split oversized bins to fit`;
-  const one = S.fmtOut === '3mf' && S.oneFile;
-  $('#oneFileRow').hidden = S.fmtOut !== '3mf'; $('#oneFile').checked = !!S.oneFile;
-  $('#dlPlates').textContent = one ? `Download ${np} print plate${np > 1 ? 's' : ''} (one .3mf)` : np > 1 || S.addImg ? `Download ${np} print plate${np > 1 ? 's' : ''} (.zip)` : `Download print plate (.${S.fmtOut})`;
-  $('#dlPlates').disabled = !np;
-  $('#undo').disabled = !undoStack.length; $('#redo').disabled = !redoStack.length;
+  const dm = S.dlMode, nParts = printParts().length;
+  document.querySelectorAll('#dlModeSeg button').forEach(b => { b.classList.toggle('on', b.dataset.dl === dm); b.setAttribute('aria-checked', b.dataset.dl === dm); });
+  $('#modeLine').hidden = dm === 'part'; $('#fmtLine').hidden = dm !== 'plate';
+  $('#printPick').innerHTML = L.leaves.map(l => `<button type="button" data-leaf="${l.n.id}" class="${printing(l) ? '' : 'off'}${l.n.id === S.sel ? ' on' : ''}" aria-pressed="${printing(l)}" title="Bin #${l.idx}: ${printing(l) ? 'printing (tap to leave out)' : 'left out (tap to print)'}"><i style="background:${color2d(l.idx)}"></i>${l.idx}</button>`).join('');
+  $('#pickInfo').textContent = nPrint === n ? 'Tap a number to leave that bin out.' : nPrint ? `${n - nPrint} bin${n - nPrint > 1 ? 's' : ''} left out. Tap again to add ${n - nPrint > 1 ? 'them' : 'it'} back.` : 'Nothing selected. Tap the bins you want to print.';
+  const fmtX = S.fmtOut === 'stl' ? 'stl' : '3mf';
+  $('#dlPlates').textContent = !nPrint ? 'Pick bins to print' : dm === 'part' ? (nParts > 1 || S.addImg ? `Download ${nParts} file${nParts > 1 ? 's' : ''} (.zip)` : 'Download (.stl)') : dm === 'plate' ? (np > 1 || S.addImg ? `Download ${np} plate${np > 1 ? 's' : ''} (.zip)` : `Download plate (.${fmtX})`) : `Download ${np} plate${np > 1 ? 's' : ''} (one .3mf)`;
+  $('#dlPlates').disabled = !nPrint || (dm !== 'part' && !np);
+    $('#undo').disabled = !undoStack.length; $('#redo').disabled = !redoStack.length;
   document.querySelectorAll('#unitSeg button').forEach(b => b.classList.toggle('on', b.dataset.unit === S.unit));
   document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.view === view));
   document.querySelectorAll('#fmtSeg button').forEach(b => b.classList.toggle('on', b.dataset.fmt === S.fmtOut));
@@ -2920,7 +3020,7 @@ const demo = (() => {
     tween(550, (k, t) => { r.style.transform = `scale(${0.2 + 1.2 * t})`; r.style.opacity = 1 - t; }).then(() => r.remove(), () => r.remove());
     q('#demoCursor').classList.add('press'); await sleep(150); q('#demoCursor').classList.remove('press'); await sleep(120);
   };
-  const reveal = async e => { const side = q('.side'), r = e.getBoundingClientRect(), sr = side.getBoundingClientRect(); if (side.contains(e) && (r.top < sr.top + 40 || r.bottom > sr.bottom - 40)) { const to = side.scrollTop + r.top - sr.top - sr.height / 2 + r.height / 2, from = side.scrollTop; await tween(500, k => { side.scrollTop = from + (to - from) * k; }); } };
+  const reveal = async e => { showControl(e); await sleep(60); const side = q('.side'), r = e.getBoundingClientRect(), sr = side.getBoundingClientRect(); if (side.contains(e) && (r.top < sr.top + 40 || r.bottom > sr.bottom - 40)) { const to = side.scrollTop + r.top - sr.top - sr.height / 2 + r.height / 2, from = side.scrollTop; await tween(500, k => { side.scrollTop = from + (to - from) * k; }); } };
   const flash = async (e, ms) => { e.classList.add('demo-hl'); await sleep(ms); e.classList.remove('demo-hl'); };
   const caption = async (title, sub) => {
     const c = q('#demoCap'); if (+getComputedStyle(c).opacity > 0) await fade(c, 0, 220);
@@ -2955,7 +3055,7 @@ const demo = (() => {
   async function run() {
     if (demoActive) return;
     if (!/rec/.test(location.hash)) track('demo-played');
-    const saved = JSON.stringify(S), u0 = undoStack.slice(), r0 = redoStack.slice(), cam0 = Object.assign({}, cam), help0 = helpEl.open, view0 = view;
+    const saved = JSON.stringify(S), u0 = undoStack.slice(), r0 = redoStack.slice(), cam0 = Object.assign({}, cam), help0 = helpEl.open, view0 = view, tab0 = curTab;
     demoActive = true; stop = false; step.i = 0; window.__demoDone = false; window.__demoRecDone = false;
     ui = document.createElement('div'); ui.id = 'demoUI';
     ui.innerHTML = `<div id="demoBar"><div></div></div>
@@ -3032,7 +3132,7 @@ const demo = (() => {
     Object.assign(cam, cam0); helpEl.open = help0;
     Object.keys(plateCams).forEach(k => delete plateCams[k]);
     demoActive = false; ui.remove(); ui = null;
-    setView(view0);
+    setView(view0); setTab(tab0, true);
     window.__demoDone = true;
   }
   return { run, stop: () => { stop = true; } };
@@ -3091,7 +3191,9 @@ const HINTS = {
 };
 function setView(v, keepFocus) {
   if (!keepFocus && focus) closeFocus(false);
+  if (v !== 'plates') lastEditView = v;
   view = v;
+  if (v === 'plates' && curTab !== 'print') setTab('print', true);
   svg.toggleAttribute('hidden', v !== '2d'); svg.style.display = v === '2d' ? '' : 'none';
   canvas.hidden = labelsEl.hidden = v !== '3d'; platesEl.hidden = v !== 'plates';
   $('#tools3d').hidden = v !== '3d';
@@ -3100,6 +3202,26 @@ function setView(v, keepFocus) {
   renderAll();
 }
 document.querySelectorAll('#viewSeg button').forEach(b => b.onclick = () => setView(b.dataset.view));
+/* ----- side panel tabs: 1 Drawer · 2 Bins · 3 Print ----- */
+var curTab = 'drawer', lastEditView = '2d';
+function setTab(t, fromView) {
+  if (!['drawer', 'bin', 'print'].includes(t)) t = 'drawer';
+  const was = curTab; curTab = t;
+  document.querySelectorAll('#sideTabs button').forEach(b => { const on = b.dataset.tab === t; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  document.querySelectorAll('.side .pane').forEach(p => { p.hidden = p.id !== 'pane-' + t; });
+  try { localStorage.setItem(STORE + '.tab', t); } catch (e) {}
+  if (fromView || typeof demoActive !== 'undefined' && demoActive) return;
+  if (t === 'print' && view !== 'plates') setView('plates');
+  else if (t !== 'print' && was === 'print' && view === 'plates') setView(lastEditView);
+  $('.side').scrollTop = 0;
+}
+// open the tab (and any closed section) that holds a control: used by the demo and the help links
+function showControl(el) {
+  const pane = el.closest && el.closest('.pane'); if (pane) setTab(pane.id.slice(5), true);
+  for (let d = el.closest && el.closest('details'); d; d = d.parentElement && d.parentElement.closest('details')) d.open = true;
+}
+document.querySelectorAll('#sideTabs button').forEach(b => b.onclick = () => setTab(b.dataset.tab));
+{ let t = 'drawer'; try { t = localStorage.getItem(STORE + '.tab') || 'drawer'; } catch (e) {} setTab(t === 'print' ? 'drawer' : t, true); }
 // Shortcuts use the physical key (e.code), so they also work with a Hebrew or any other keyboard layout.
 // Only a text/number field you are in the middle of typing in keeps its own Ctrl+Z.
 document.addEventListener('input', e => { if (e.target.matches('input[type=number],input[type=text]')) e.target._dirty = true; }, true);
